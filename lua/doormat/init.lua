@@ -89,44 +89,108 @@ local function picker()
 	end
 end
 
--- What the doormat offers, as { key, label, action }. "restore" opens the last
--- file under cwd, and "find" and "grep" need a picker; each shows up only when
--- it can work.
+-- The built-in items by name. Each returns { key, label, action }, or nil
+-- when it cannot work: "restore" needs a file under cwd, "find" and "grep" a
+-- picker.
+local builtin = {}
+
+function builtin.restore()
+	local file = last_file()
+	if not file then
+		return nil
+	end
+	return {
+		key = "s",
+		label = "restore",
+		action = function()
+			vim.cmd.edit(vim.fn.fnameescape(file))
+			-- Back to the last cursor position, like :help last-position-jump
+			local mark = vim.api.nvim_buf_get_mark(0, '"')
+			if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(0) then
+				pcall(vim.api.nvim_win_set_cursor, 0, mark)
+			end
+		end,
+	}
+end
+
+function builtin.find()
+	local pick = picker()
+	return pick and {
+		key = "f",
+		label = "find",
+		action = function()
+			pick.files()
+		end,
+	}
+end
+
+function builtin.grep()
+	local pick = picker()
+	return pick and {
+		key = "g",
+		label = "grep",
+		action = function()
+			pick.grep()
+		end,
+	}
+end
+
+function builtin.quit()
+	return { key = "q", label = "quit", action = "<Cmd>qa<CR>" }
+end
+
+local default_items = { "restore", "find", "grep", "quit" }
+
+local config = { items = default_items }
+
+-- error() at level 0, so the message is not prefixed with this file's path
+local function check(ok, msg)
+	if not ok then
+		error(msg, 0)
+	end
+end
+
+local function check_item(item, i)
+	local where = "doormat: items[" .. i .. "]"
+	if type(item) == "string" then
+		check(builtin[item], where .. ": no built-in item " .. vim.inspect(item))
+		return
+	end
+	check(type(item) == "table", where .. ": expected a built-in name or a table")
+	check(type(item.key) == "string" and item.key ~= "", where .. ".key: expected a string")
+	check(type(item.label) == "string", where .. ".label: expected a string")
+	check(
+		vim.tbl_contains({ "string", "function" }, type(item.action)),
+		where .. ".action: expected a string or function"
+	)
+	check(item.cond == nil or type(item.cond) == "function", where .. ".cond: expected a function")
+end
+
+--- Sets the menu. `items` is a list of built-in names ("restore", "find",
+--- "grep", "quit") and { key, label, action, cond? } tables; see README.
+---@param opts? { items?: (string|{ key: string, label: string, action: string|function, cond?: fun(): boolean })[] }
+function M.setup(opts)
+	opts = opts or {}
+	if opts.items ~= nil then
+		check(type(opts.items) == "table", "doormat: items: expected a list")
+		for i, item in ipairs(opts.items) do
+			check_item(item, i)
+		end
+	end
+	config.items = opts.items or default_items
+end
+
+-- The menu as { key, label, action }, leaving out every item that cannot work
 local function items()
 	local list = {}
-	local file = last_file()
-	if file then
-		list[#list + 1] = {
-			key = "s",
-			label = "restore",
-			action = function()
-				vim.cmd.edit(vim.fn.fnameescape(file))
-				-- Back to the last cursor position, like :help last-position-jump
-				local mark = vim.api.nvim_buf_get_mark(0, '"')
-				if mark[1] > 0 and mark[1] <= vim.api.nvim_buf_line_count(0) then
-					pcall(vim.api.nvim_win_set_cursor, 0, mark)
-				end
-			end,
-		}
+	for _, item in ipairs(config.items) do
+		if type(item) == "string" then
+			item = builtin[item]()
+		elseif item.cond and not item.cond() then
+			item = nil
+		end
+		list[#list + 1] = item
 	end
-	local pick = picker()
-	if pick then
-		list[#list + 1] = {
-			key = "f",
-			label = "find",
-			action = function()
-				pick.files()
-			end,
-		}
-		list[#list + 1] = {
-			key = "g",
-			label = "grep",
-			action = function()
-				pick.grep()
-			end,
-		}
-	end
-	list[#list + 1] = { key = "q", label = "quit", action = "<Cmd>qa<CR>" }
 	return list
 end
 

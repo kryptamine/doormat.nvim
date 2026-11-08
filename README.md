@@ -19,7 +19,7 @@ _The very opinionated Neovim dashboard: a logo, four keys and your startup time.
 ```
 
 Start `nvim` with no arguments and the doormat is there. Open anything and it
-is gone. There is nothing to configure.
+is gone. It works without any setup; the menu is the one thing you can change.
 
 | key | does                                                                 |
 | --- | -------------------------------------------------------------------- |
@@ -60,6 +60,36 @@ vim.pack.add({ "https://github.com/kryptamine/doormat.nvim" })
 ## Usage
 
 `:Doormat` opens it again in a new buffer.
+
+## Menu
+
+The menu above is the default. To change it, pass `items` to `setup()`: a list
+of the built-in names `"restore"`, `"find"`, `"grep"` and `"quit"`, and your
+own items, drawn in that order.
+
+```lua
+require("doormat").setup({
+  items = {
+    "restore",
+    { key = "n", label = "new", action = "<Cmd>enew<CR>" },
+    { key = "f", label = "find", action = function() Snacks.picker.files() end },
+    { key = "l", label = "lazy", action = "<Cmd>Lazy<CR>", cond = function() return package.loaded.lazy ~= nil end },
+    "quit",
+  },
+})
+```
+
+With lazy.nvim the same table goes in `opts`. An item of your own has:
+
+| field    | is                                                                  |
+| -------- | ------------------------------------------------------------------- |
+| `key`    | the key that runs it                                                |
+| `label`  | the hint shown beside the key                                       |
+| `action` | a function, or a mapping right-hand side such as `"<Cmd>enew<CR>"`  |
+| `cond`   | optional: a function, and the item shows up only when it is true    |
+
+A built-in item still shows up only when it can work, and `setup()` raises an
+error on an item it cannot use.
 
 ## Colors
 
