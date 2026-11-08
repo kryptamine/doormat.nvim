@@ -25,6 +25,33 @@ for _, mark in ipairs(vim.api.nvim_buf_get_extmarks(buf, -1, 0, -1, { details = 
 	end
 end
 
+-- A custom menu replaces the default one, and an item whose cond fails is
+-- left out
+require("doormat").setup({
+	items = {
+		{ key = "n", label = "new", action = "<Cmd>enew<CR>" },
+		{
+			key = "x",
+			label = "never",
+			action = "<Cmd>enew<CR>",
+			cond = function()
+				return false
+			end,
+		},
+		"quit",
+	},
+})
+vim.cmd.enew()
+require("doormat").open()
+buf = vim.api.nvim_get_current_buf()
+local custom = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
+if not custom:find("n new", 1, true) or custom:find("never", 1, true) then
+	fail("custom items not drawn as set")
+end
+if pcall(require("doormat").setup, { items = { "nope" } }) then
+	fail("setup accepted an unknown built-in item")
+end
+
 -- The doormat steps aside for a real buffer
 vim.cmd.enew()
 if vim.api.nvim_buf_is_valid(buf) then
