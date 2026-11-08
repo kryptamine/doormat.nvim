@@ -2,39 +2,10 @@
 
 _The very opinionated Neovim dashboard: a logo, four keys and your startup time._
 
-```
-                 ▄█               ▄█
-               ▄████▄           ▄███
-            ▄▄███████▄        ▄█████
-                     ...
-                 ▀           █▀   ▀█
-
-                    ╭╮╷╭─╴╭─╮╷ ╷╷╭┬╮
-                    │╰┤├╴ │ ││╭╯││││
-                    ╵ ╵╰─╴╰─╯╰╯ ╵╵ ╵
-
-            s restore   f find   g grep   q quit
-
-                     v0.12.6  ·  43 ms
-```
+![doormat](assets/screenshot.png)
 
 Start `nvim` with no arguments and the doormat is there. Open anything and it
 is gone. It works without any setup; the menu is the one thing you can change.
-
-| key | does                                                                 |
-| --- | -------------------------------------------------------------------- |
-| `s` | restore: reopen the last file you edited under the current directory |
-| `f` | find a file                                                          |
-| `g` | grep                                                                 |
-| `q` | quit                                                                 |
-
-A key only shows up when it can work: `s` needs a recent file under the
-current directory, and `f` and `g` need a picker, the first of
-[fff.nvim](https://github.com/dmtrKovalenko/fff.nvim),
-[fzf-lua](https://github.com/ibhagwan/fzf-lua) and
-[telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) that is
-installed. The startup time comes from
-[lazy.nvim](https://github.com/folke/lazy.nvim) and is left out without it.
 
 Needs Neovim 0.10 or newer.
 
@@ -63,9 +34,8 @@ vim.pack.add({ "https://github.com/kryptamine/doormat.nvim" })
 
 ## Menu
 
-The menu above is the default. To change it, pass `items` to `setup()`: a list
-of the built-in names `"restore"`, `"find"`, `"grep"` and `"quit"`, and your
-own items, drawn in that order.
+The default menu is `"restore"`, `"find"`, `"grep"` and `"quit"`. To change it, pass `items` to `setup()`: a list of
+built-in names and your own items, drawn in that order.
 
 ```lua
 require("doormat").setup({
