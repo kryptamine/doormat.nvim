@@ -4,12 +4,12 @@ local M = {}
 
 local ns = vim.api.nvim_create_namespace("doormat")
 
--- The official mark's blue / light green / green, mapped onto the
--- gruber-darker-renaissance palette: niagara, green, green_muted.
+-- The official mark's blue, light green and green. ctermfg is the terminal's
+-- own palette; without termguicolors that is what shows.
 local highlights = {
-	DoormatLogoBlue = { fg = "#9fb2d6" },
-	DoormatLogoLightGreen = { fg = "#8ac568" },
-	DoormatLogoGreen = { fg = "#476834" },
+	DoormatLogoBlue = { fg = "#9fb2d6", ctermfg = 4 },
+	DoormatLogoLightGreen = { fg = "#8ac568", ctermfg = 10 },
+	DoormatLogoGreen = { fg = "#476834", ctermfg = 2 },
 	DoormatKey = { link = "DoormatLogoLightGreen" },
 	DoormatHint = { link = "Comment" },
 	DoormatFooter = { link = "Comment" },
@@ -23,10 +23,40 @@ local part_hl = {
 	r = "DoormatLogoGreen",
 }
 
+local function terminal_color(n)
+	local color = vim.g["terminal_color_" .. n]
+	if type(color) == "string" and color:match("^#%x%x%x%x%x%x$") then
+		return tonumber(color:sub(2), 16)
+	end
+end
+
+-- Half way from `a` to `b`, channel by channel
+local function mix(a, b)
+	local out = 0
+	for shift = 0, 16, 8 do
+		local ca, cb = bit.band(bit.rshift(a, shift), 0xff), bit.band(bit.rshift(b, shift), 0xff)
+		out = out + bit.lshift(math.floor((ca + cb) / 2), shift)
+	end
+	return out
+end
+
+-- The mark's gui colors from the colorscheme's :terminal palette, or nil. Many
+-- palettes make green and bright green one color, so the dark green is the
+-- light one mixed into the background instead.
+local function terminal_logo()
+	local blue, green = terminal_color(4), terminal_color(10) or terminal_color(2)
+	if not (blue and green) then
+		return nil
+	end
+	local bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg or 0
+	return { DoormatLogoBlue = blue, DoormatLogoLightGreen = green, DoormatLogoGreen = mix(green, bg) }
+end
+
 -- `default`, so a colorscheme that defines these groups wins
 local function set_highlights()
+	local logo_fg = terminal_logo() or {}
 	for name, spec in pairs(highlights) do
-		vim.api.nvim_set_hl(0, name, vim.tbl_extend("force", spec, { default = true }))
+		vim.api.nvim_set_hl(0, name, vim.tbl_extend("force", spec, { fg = logo_fg[name], default = true }))
 	end
 end
 
