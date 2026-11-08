@@ -12,6 +12,7 @@ lua/doormat/
   init.lua             open(): the menu, rendering and highlights
   logo.lua             the mark and wordmark, and their color masks
 scripts/smoke.lua      the headless check `make smoke` runs
+assets/                README images
 ```
 
 ## Language rule (mandatory)
@@ -91,7 +92,8 @@ make smoke      # start a bare nvim headless, fail unless the doormat opens
 - The doormat opens only on a bare `nvim`: no file argument, nothing on stdin,
   an empty unnamed first buffer. A change to `plugin/doormat.lua` must keep
   `nvim file` and `nvim -` out of its way.
-- README's key table, option, color table and requirements describe the code;
-  a key, option, group or requirement changed takes README with it.
+- README's menu, color table and requirements describe the code; an item,
+  option, group or requirement changed takes README with it, and a visible
+  change takes a new `assets/screenshot.png`.
 - `setup()` validates its table and fails loudly on a mistake; a check that is
   only a warning hides a broken menu.
