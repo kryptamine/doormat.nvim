@@ -23,7 +23,8 @@ beyond it.
 
 <!--
 A two-way door is cheap to walk back; a one-way door is not — a menu key
-remapped or removed, a highlight group users override, the :Doormat command,
+remapped or removed, a built-in item or `items` field renamed, a highlight
+group users override, the :Doormat command,
 the filetype or module name.
 -->
 
@@ -37,6 +38,7 @@ the filetype or module name.
 - [ ] One logical change per commit, Conventional Commits, no co-author
       trailer. **PRs are rebased, never squashed or merged**, so the commit
       messages are what lands in the history.
-- [ ] No option or `setup()` added; a key shows up only when it can work.
-- [ ] README's keys, colors and requirements match the code.
+- [ ] No option added beyond `items`, or README documents the new one; an item
+      shows up only when it can work.
+- [ ] README's keys, options, colors and requirements match the code.
 - [ ] This pull request is one thing.

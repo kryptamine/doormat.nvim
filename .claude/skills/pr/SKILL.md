@@ -46,7 +46,7 @@ after:      s restore   f find   g grep   r recent   q quit
 +	DoormatKey = { link = "Special" },
 ```
 
-- When a key shows up as a table of conditions:
+- When an item shows up as a table of conditions:
 
 ```text
 key   shows up when
@@ -93,8 +93,9 @@ Concrete evidence the change works: a before and an after.
 ## Merge Danger
 
 **Door:** `one-way` or `two-way`. A two-way door is cheap to walk back. Here
-the usual one-way doors are a menu key remapped or removed, a highlight group
-users override in their config, the `:Doormat` command, and the `doormat`
+the usual one-way doors are a menu key remapped or removed, a built-in item
+name or an `items` field renamed, a highlight group users override in their
+config, the `:Doormat` command, and the `doormat`
 filetype or module name.
 
 **Blast Radius:** one word, then a line of what could break and for whom:
