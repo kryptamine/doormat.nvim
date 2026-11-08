@@ -13,6 +13,7 @@ local highlights = {
 	DoormatKey = { link = "DoormatLogoLightGreen" },
 	DoormatHint = { link = "Comment" },
 	DoormatFooter = { link = "Comment" },
+	DoormatCursor = { blend = 100 },
 }
 
 -- Mask letter to the highlight of that part of the mark: (l)eft bar,
@@ -321,6 +322,20 @@ function M.open()
 			vim.o.laststatus = laststatus
 		end,
 	})
+
+	-- With termguicolors, a cursor highlight with blend = 100 is not drawn.
+	-- Normal mode only, so the command line keeps its cursor; any other window
+	-- gets it back.
+	local guicursor = vim.o.guicursor
+	local function hide_cursor()
+		vim.o.guicursor = (guicursor == "" and "" or guicursor .. ",") .. "n:block-DoormatCursor"
+	end
+	local function show_cursor()
+		vim.o.guicursor = guicursor
+	end
+	hide_cursor()
+	vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, { buffer = buf, callback = hide_cursor })
+	vim.api.nvim_create_autocmd({ "BufLeave", "WinLeave", "BufWipeout" }, { buffer = buf, callback = show_cursor })
 
 	set_highlights()
 	local list = items()

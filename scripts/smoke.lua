@@ -25,6 +25,21 @@ for _, mark in ipairs(vim.api.nvim_buf_get_extmarks(buf, -1, 0, -1, { details = 
 	end
 end
 
+-- The cursor is hidden on the doormat and comes back anywhere else
+local guicursor = vim.o.guicursor
+if not guicursor:find("DoormatCursor", 1, true) then
+	fail("cursor not hidden, guicursor is " .. guicursor)
+end
+vim.cmd.split()
+vim.cmd.enew()
+if vim.o.guicursor:find("DoormatCursor", 1, true) then
+	fail("cursor still hidden in another window")
+end
+vim.cmd.close()
+if vim.o.guicursor ~= guicursor then
+	fail("cursor not hidden again back on the doormat")
+end
+
 -- A custom menu replaces the default one, and an item whose cond fails is
 -- left out
 require("doormat").setup({
@@ -56,6 +71,9 @@ end
 vim.cmd.enew()
 if vim.api.nvim_buf_is_valid(buf) then
 	fail("doormat buffer was not wiped")
+end
+if vim.o.guicursor:find("DoormatCursor", 1, true) then
+	fail("cursor still hidden after the doormat was wiped")
 end
 
 io.stdout:write("smoke: ok\n")
