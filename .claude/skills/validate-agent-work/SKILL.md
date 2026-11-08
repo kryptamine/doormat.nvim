@@ -42,7 +42,8 @@ them in before handing work back.
 
 5. **Read the diff against the mandatory rules in AGENTS.md** — the language,
    commit, design and comment rules, and the "Working here" list. Two need a
-   search rather than a read: an option or `setup()` sneaking in, and a key,
+   search rather than a read: an option added beyond `items` without a reason in
+   the pull request, and a key, option,
    group or requirement added without README following it.
 
 6. **Before opening a pull request**, write its body with the `pr` skill and
