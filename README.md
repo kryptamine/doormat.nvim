@@ -98,7 +98,8 @@ The mark follows your terminal colors. When the colorscheme sets the
 bright green (10, or 2); the dark green is that green mixed half way into the
 `Normal` background, since many palettes make green and bright green one
 color. Without that palette the mark keeps the official Neovim colors below,
-and without `termguicolors` it uses the terminal's own ANSI colors. Every
+and without `termguicolors` it uses the terminal's own ANSI colors. The
+cursor is hidden on the doormat when `termguicolors` is on. Every
 group is set with `default`, so a colorscheme or your config can override any
 of them:
 
@@ -110,6 +111,7 @@ of them:
 | `DoormatKey`            | the keys                     | links to `DoormatLogoLightGreen` |
 | `DoormatHint`           | the key labels               | links to `Comment`               |
 | `DoormatFooter`         | the version and startup time | links to `Comment`               |
+| `DoormatCursor`         | the cursor, hidden           | `blend = 100`                    |
 
 ## License
 
