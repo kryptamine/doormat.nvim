@@ -63,14 +63,20 @@ vim.pack.add({ "https://github.com/kryptamine/doormat.nvim" })
 
 ## Colors
 
-The mark is drawn in the official Neovim blue and greens. Every group is set
-with `default`, so a colorscheme or your config can override any of them:
+The mark follows your terminal colors. When the colorscheme sets the
+`:terminal` palette (`g:terminal_color_N`), the mark takes its blue (4) and
+bright green (10, or 2); the dark green is that green mixed half way into the
+`Normal` background, since many palettes make green and bright green one
+color. Without that palette the mark keeps the official Neovim colors below,
+and without `termguicolors` it uses the terminal's own ANSI colors. Every
+group is set with `default`, so a colorscheme or your config can override any
+of them:
 
 | group                   | used for                     | default                          |
 | ----------------------- | ---------------------------- | -------------------------------- |
-| `DoormatLogoBlue`       | the mark's left bar, "neo"   | `#9fb2d6`                        |
-| `DoormatLogoLightGreen` | the mark's diagonal          | `#8ac568`                        |
-| `DoormatLogoGreen`      | the mark's right bar, "vim"  | `#476834`                        |
+| `DoormatLogoBlue`       | the mark's left bar, "neo"   | `#9fb2d6`, ANSI 4                |
+| `DoormatLogoLightGreen` | the mark's diagonal          | `#8ac568`, ANSI 10               |
+| `DoormatLogoGreen`      | the mark's right bar, "vim"  | `#476834`, ANSI 2                |
 | `DoormatKey`            | the keys                     | links to `DoormatLogoLightGreen` |
 | `DoormatHint`           | the key labels               | links to `Comment`               |
 | `DoormatFooter`         | the version and startup time | links to `Comment`               |
